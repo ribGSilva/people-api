@@ -1,0 +1,333 @@
+definitions:
+  handler.Error:
+    properties:
+      field:
+        example: name
+        type: string
+      message:
+        type: string
+    type: object
+  person.CreateRequest:
+    description: Person create request body
+    properties:
+      contractDuration:
+        description: ContactDuration time of contract
+        example: 5 months
+        type: string
+      name:
+        description: Name of the person
+        example: William
+        maxLength: 100
+        minLength: 3
+        type: string
+      role:
+        description: Role of the employee
+        example: Software Engineer
+        maxLength: 50
+        minLength: 3
+        type: string
+      tags:
+        description: Tags technologies of the person
+        example:
+        - c#
+        - c++
+        items:
+          type: string
+        type: array
+      type:
+        description: 'Type of the person: contractor - employee'
+        enum:
+        - contractor
+        - employee
+        example: employee
+        type: string
+    required:
+    - name
+    - type
+    type: object
+  person.CreateResponse:
+    description: Person create request body
+    properties:
+      id:
+        description: Id of the person in the system
+        example: 3de26feb-5cd5-4d70-81b9-44bf6f74f453
+        maxLength: 36
+        minLength: 36
+        type: string
+    required:
+    - id
+    type: object
+  person.Person:
+    description: Person represents data about a person
+    properties:
+      contractDuration:
+        description: ContactDuration time of contract
+        example: 5 months
+        maxLength: 50
+        minLength: 0
+        type: string
+      createdAt:
+        description: Date of creation
+        example: "2006-01-02T15:04:05Z"
+        type: string
+      id:
+        description: Id of the person in the system
+        example: 3de26feb-5cd5-4d70-81b9-44bf6f74f453
+        maxLength: 36
+        minLength: 36
+        type: string
+      name:
+        description: Name of the person
+        example: William
+        maxLength: 100
+        minLength: 3
+        type: string
+      role:
+        description: Role of the employee
+        example: Software Engineer
+        maxLength: 50
+        minLength: 3
+        type: string
+      tags:
+        description: Tags technologies of the person
+        example:
+        - c#
+        - c++
+        items:
+          type: string
+        type: array
+      type:
+        description: 'Type of the person: contractor - employee'
+        enum:
+        - contractor
+        - employee
+        example: employee
+        type: string
+      updatedAt:
+        description: Date of the last update
+        example: "2006-01-02T15:04:05Z"
+        type: string
+    required:
+    - id
+    - name
+    - type
+    type: object
+  person.UpdateRequest:
+    description: Person update request body
+    properties:
+      contractDuration:
+        description: ContactDuration time of contract
+        example: 5 months
+        type: string
+      name:
+        description: Name of the person
+        example: William
+        maxLength: 100
+        minLength: 3
+        type: string
+      role:
+        description: Role of the employee
+        example: Software Engineer
+        maxLength: 50
+        minLength: 3
+        type: string
+      tags:
+        description: Tags technologies of the person
+        example:
+        - c#
+        - c++
+        items:
+          type: string
+        type: array
+      type:
+        description: 'Type of the person: contractor - employee'
+        enum:
+        - contractor
+        - employee
+        example: employee
+        type: string
+    required:
+    - name
+    - type
+    type: object
+info:
+  contact:
+    name: Gabriel Ribeiro Silva
+  description: Service to store handle person data.
+  title: Person API
+  version: "1.0"
+paths:
+  /v1/healthcheck:
+    get:
+      description: Check if ist is running
+      responses:
+        "200":
+          description: ""
+      summary: Check if ist is running
+      tags:
+      - Healthcheck
+  /v1/persons:
+    get:
+      description: Search for persons using its fields
+      parameters:
+      - description: Tags technologies of the person
+        example:
+        - c#
+        - c++
+        in: query
+        items:
+          type: string
+        name: tags
+        required: true
+        type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/person.Person'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Search for persons
+      tags:
+      - Person
+    post:
+      description: Create a new "person" into the system
+      parameters:
+      - description: Idempotency
+        in: header
+        name: X-Idempotency-Key
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/person.CreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/person.CreateResponse'
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+      summary: Creates a new "person"
+      tags:
+      - Person
+  /v1/persons/{id}:
+    delete:
+      description: Delete a person using its id
+      parameters:
+      - description: Person id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/person.Person'
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Delete a person
+      tags:
+      - Person
+    get:
+      description: Find a person using its id
+      parameters:
+      - description: Person id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/person.Person'
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handler.Error'
+      summary: Find a person
+      tags:
+      - Person
+    put:
+      description: Replaces all data of a person
+      parameters:
+      - description: Idempotency
+        in: header
+        name: X-Idempotency-Key
+        required: true
+        type: string
+      - description: Person id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Request body
+        in: body
+        name: Request
+        required: true
+        schema:
+          $ref: '#/definitions/person.UpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/person.Person'
+        "400":
+          description: Bad Request
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            items:
+              $ref: '#/definitions/handler.Error'
+            type: array
+      summary: Replaces the person
+      tags:
+      - Person
+swagger: "2.0"
